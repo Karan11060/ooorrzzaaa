@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '@/store/cartStore';
 
 const CartDrawer = () => {
-  const { items, isOpen, toggleCart, updateQty, removeItem, totalPrice } = useCartStore();
+  const { items, isOpen, toggleCart, updateQty, removeItem } = useCartStore();
   const navigate = useNavigate();
 
   return (
@@ -48,7 +48,6 @@ const CartDrawer = () => {
                       <img src={item.image_url} alt={item.name} className="w-16 h-16 rounded-lg object-cover" />
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-sm truncate">{item.name}</h4>
-                        <p className="text-secondary font-bold">₹{item.price_inr}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <button onClick={() => updateQty(item.id, item.quantity - 1)} className="w-6 h-6 rounded-full bg-background flex items-center justify-center border border-border">
                             <Minus className="w-3 h-3" />
@@ -71,12 +70,9 @@ const CartDrawer = () => {
             {items.length > 0 && (
               <div className="p-6 border-t border-border space-y-4">
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span>₹{totalPrice()}</span>
+                  <span>Items</span>
+                  <span>{items.reduce((sum, i) => sum + i.quantity, 0)}</span>
                 </div>
-                {totalPrice() < 999 && (
-                  <p className="text-xs text-muted-foreground">Free shipping on orders above ₹999</p>
-                )}
                 <button onClick={() => { toggleCart(); navigate('/checkout'); }} className="btn-saffron w-full text-center">
                   Proceed to Checkout
                 </button>

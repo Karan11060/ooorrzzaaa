@@ -1,15 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  shelf_life: string;
-  price_inr: number;
-  image_url: string;
-}
+import { Star } from 'lucide-react';
+import type { Product } from '@/data/products';
 
 const ProductCard = ({ product, index = 0 }: { product: Product; index?: number }) => {
 
@@ -35,22 +27,22 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
       />
 
       <Link to={`/products/${product.id}`}>
-        <div className="aspect-[4/3] overflow-hidden rounded-t-2xl">
+        <div className="aspect-square overflow-hidden rounded-t-2xl relative bg-white flex items-center justify-center p-4">
           <img
             src={product.image_url}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
         </div>
       </Link>
 
       <div className="p-5">
-        <div className="flex gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-3">
           <span className="text-xs px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium">
-            {product.type}
+            {product.category}
           </span>
           <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-            {product.shelf_life}
+            {product.servingSize}
           </span>
         </div>
 
@@ -63,6 +55,13 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
         <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
           {product.description}
         </p>
+
+        <div className="flex items-center justify-end">
+          <div className="flex items-center gap-1 text-sm text-amber-500">
+            <Star className="w-4 h-4 fill-current" />
+            <span>{product.rating}</span>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

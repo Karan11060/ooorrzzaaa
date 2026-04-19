@@ -3,7 +3,7 @@ import ProductCard from '@/components/ProductCard';
 import { useProducts } from '@/hooks/useProducts';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Loader2, Leaf, ShieldCheck, Heart, Sparkles, ArrowRight, Star, Quote } from 'lucide-react';
+import { Leaf, ShieldCheck, Heart, Sparkles, ArrowRight, Star, Quote } from 'lucide-react';
 import { useRef } from 'react';
 import MandalaBackground from '@/components/MandalaBackground';
 
@@ -38,7 +38,7 @@ const processSteps = [
 ];
 
 const Home = () => {
-  const { products, loading } = useProducts();
+  const { products } = useProducts();
   const parallaxRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: parallaxRef, offset: ['start end', 'end start'] });
   const parallaxY = useTransform(scrollYProgress, [0, 1], [60, -60]);
@@ -109,25 +109,26 @@ const Home = () => {
               Our Collection
             </motion.p>
             <motion.h2 variants={fadeUp} className="font-heading text-4xl sm:text-5xl text-foreground mb-4">
-              Our <span className="text-secondary">Wholesome</span> Range
+              5 Types of <span className="text-secondary">Healthy Food</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-muted-foreground max-w-xl mx-auto">
-              Handcrafted health foods rooted in Indian tradition, loved across 11+ countries
+              Handcrafted health foods — Nuts & Bars, Dry Fruits, Seeds, High-Protein Oats, and Natural Shakes
             </motion.p>
             <motion.div variants={fadeUp} className="w-24 h-1 bg-accent mx-auto rounded-full mt-4" />
           </motion.div>
 
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.slice(0, 6).map((product, i) => (
-                <ProductCard key={product.id} product={product} index={i} />
-              ))}
-            </div>
-          )}
+          {/* Product Cards */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={stagger}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-14"
+          >
+            {products.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +204,7 @@ const Home = () => {
         <div className="container mx-auto relative z-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-center">
             {[
-              { value: '6', label: 'Health Products', suffix: '' },
+              { value: '5', label: 'Health Products', suffix: '' },
               { value: '100', label: 'Natural Ingredients', suffix: '%' },
               { value: '10K', label: 'Happy Families', suffix: '+' },
             ].map((stat, i) => (

@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
 const Checkout = () => {
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items, clearCart } = useCartStore();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -22,11 +22,6 @@ const Checkout = () => {
     city: '',
     pincode: '',
   });
-
-  const subtotal = totalPrice();
-  const shipping = subtotal >= 999 ? 0 : 49;
-  const tax = Math.round(subtotal * 0.05);
-  const total = subtotal + shipping + tax;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -43,21 +38,19 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // For demo: create order directly without edge function (Razorpay test mode)
       const orderId = `order_demo_${Date.now()}`;
 
       await openRazorpayCheckout({
         orderId,
-        amount: total * 100, // paise
+        amount: 0,
         userName: form.name,
         userEmail: user.email || '',
         userPhone: form.phone,
         onSuccess: async (response) => {
-          // Save order to Supabase
           const { error } = await supabase.from('orders').insert({
             user_id: user.id,
             items: items as any,
-            total_inr: total,
+            total_inr: 0,
             razorpay_order_id: response.razorpay_order_id || orderId,
             razorpay_payment_id: response.razorpay_payment_id,
             status: 'processing',
@@ -84,11 +77,10 @@ const Checkout = () => {
         },
       });
     } catch {
-      // If Razorpay fails to load (e.g. no key), save order as demo
       const { error } = await supabase.from('orders').insert({
         user_id: user.id,
         items: items as any,
-        total_inr: total,
+        total_inr: 0,
         razorpay_order_id: `demo_${Date.now()}`,
         razorpay_payment_id: `demo_pay_${Date.now()}`,
         status: 'processing',
@@ -181,7 +173,7 @@ const Checkout = () => {
 
             <button type="submit" disabled={loading || !user} className="btn-saffron w-full flex items-center justify-center gap-2 mt-6 disabled:opacity-50">
               <CreditCard className="w-5 h-5" />
-              {loading ? 'Processing...' : `Pay ₹${total} with Razorpay`}
+              {loading ? 'Processing...' : 'Place Order'}
             </button>
 
             {!user && <p className="text-destructive text-sm text-center">Please login to complete your purchase</p>}
@@ -203,18 +195,12 @@ const Checkout = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
-                    <span className="font-medium">₹{item.price_inr * item.quantity}</span>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-border pt-3 space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>₹{subtotal}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Tax (5%)</span><span>₹{tax}</span></div>
-              </div>
               <div className="border-t border-border pt-3 mt-3 flex justify-between text-lg font-bold">
-                <span>Total</span>
-                <span>₹{total}</span>
+                <span>Total Items</span>
+                <span>{items.reduce((sum, i) => sum + i.quantity, 0)}</span>
               </div>
             </div>
           </motion.div>

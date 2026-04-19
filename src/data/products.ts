@@ -1,80 +1,141 @@
-export const products = [
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  servingSize: string;
+  price_inr: number;
+  image_url: string;
+  images: string[];
+  rating: number;
+  in_stock: boolean;
+}
+
+export const categories = [
+  "Nuts & Bars",
+  "Dry Fruits",
+  "Seeds",
+  "High-Protein Oats",
+  "Natural Shakes & Juices",
+];
+
+export const servingSizes = [
+  "Single Serve",
+  "2 People Serve",
+  "4 People Serve",
+  "Family Pack",
+];
+
+// Category → branded packet image
+const categoryImage: Record<string, string> = {
+  "Nuts & Bars": "/products/nuts-bars.png",
+  "Dry Fruits": "/products/dry-fruits.png",
+  Seeds: "/products/seeds.png",
+  "High-Protein Oats": "/products/oats.png",
+  "Natural Shakes & Juices": "/products/shakes-juices.png",
+};
+
+export const categoryDetails: {
+  name: string;
+  description: string;
+  image: string;
+}[] = [
   {
-    id: "1",
-    name: "Steamed Vegetable Bowl",
-    description: "Broccoli, carrot & green beans seasoned with cracked pepper and lemon. Light, vibrant, and wholesome.",
-    type: "Healthy Meal",
-    shelf_life: "9–12 months",
-    age_group: "18–45 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "Canada"],
-    price_inr: 349,
-    price_usd: 4.99,
-    image_url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+    name: "Nuts & Bars",
+    description:
+      "Energy-packed and convenient snacks made from premium nuts and natural ingredients. Ideal for quick nutrition on the go.",
+    image: "/products/nuts-bars.png",
+  },
+  {
+    name: "Dry Fruits",
+    description:
+      "Rich in vitamins, minerals, and antioxidants. Includes almonds, cashews, raisins, figs, etc., supporting overall health and immunity.",
+    image: "/products/dry-fruits.png",
+  },
+  {
+    name: "Seeds",
+    description:
+      "Nutrient-dense superfoods like chia seeds, flaxseeds, pumpkin seeds, and sunflower seeds — great for digestion, heart health, and protein intake.",
+    image: "/products/seeds.png",
+  },
+  {
+    name: "High-Protein Oats",
+    description:
+      "Oats enriched with high protein content to support fitness, muscle building, and sustained energy throughout the day.",
+    image: "/products/oats.png",
+  },
+  {
+    name: "Natural Shakes & Juices",
+    description:
+      "Fresh and preservative-free beverages made from natural fruits and ingredients, promoting hydration and wellness.",
+    image: "/products/shakes-juices.png",
+  },
+];
+
+export const products: Product[] = [
+  {
+    id: "nuts-bars",
+    name: "Nuts & Bars",
+    description:
+      "Energy-packed and convenient snacks made from premium nuts and natural ingredients. Ideal for quick nutrition on the go.",
+    category: "Nuts & Bars",
+    servingSize: "Family Pack",
+    price_inr: 499,
+    image_url: "/products/nuts-bars.png",
+    images: ["/products/nuts-bars.png"],
+    rating: 4.7,
     in_stock: true,
   },
   {
-    id: "2",
-    name: "Boiled Quinoa Bowl",
-    description: "Protein-rich quinoa loved by health-conscious eaters worldwide. Clean fuel for your body.",
-    type: "Healthy Meal",
-    shelf_life: "9–12 months",
-    age_group: "25–45 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "France", "Netherlands", "Saudi Arabia", "Spain", "Singapore", "Japan"],
+    id: "dry-fruits",
+    name: "Dry Fruits",
+    description:
+      "Rich in vitamins, minerals, and antioxidants. Includes almonds, cashews, raisins, figs, etc., supporting overall health and immunity.",
+    category: "Dry Fruits",
+    servingSize: "Family Pack",
+    price_inr: 599,
+    image_url: "/products/dry-fruits.png",
+    images: ["/products/dry-fruits.png"],
+    rating: 4.8,
+    in_stock: true,
+  },
+  {
+    id: "seeds",
+    name: "Seeds",
+    description:
+      "Nutrient-dense superfoods like chia seeds, flaxseeds, pumpkin seeds, and sunflower seeds — great for digestion, heart health, and protein intake.",
+    category: "Seeds",
+    servingSize: "Family Pack",
     price_inr: 399,
-    price_usd: 5.49,
-    image_url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
+    image_url: "/products/seeds.png",
+    images: ["/products/seeds.png"],
+    rating: 4.6,
     in_stock: true,
   },
   {
-    id: "3",
-    name: "Brown Rice Bowl with Veggies & Pulses",
-    description: "Wholesome brown rice with seasonal veggies and protein-rich pulses. A balanced, satisfying bowl.",
-    type: "Healthy Meal",
-    shelf_life: "12–18 months",
-    age_group: "20–50 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "France", "Middle East", "Korea"],
-    price_inr: 379,
-    price_usd: 4.79,
-    image_url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80",
+    id: "high-protein-oats",
+    name: "High-Protein Oats",
+    description:
+      "Oats enriched with high protein content to support fitness, muscle building, and sustained energy throughout the day.",
+    category: "High-Protein Oats",
+    servingSize: "Family Pack",
+    price_inr: 349,
+    image_url: "/products/oats.png",
+    images: ["/products/oats.png"],
+    rating: 4.7,
     in_stock: true,
   },
   {
-    id: "4",
-    name: "Oat Porridge (Plain / Veg Oats)",
-    description: "Warm comforting oat porridge made with herbs instead of salt. A nourishing start to every morning.",
-    type: "Healthy Breakfast",
-    shelf_life: "9–15 months",
-    age_group: "18–45 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "Sweden", "Saudi Arabia", "Singapore"],
+    id: "natural-shakes-juices",
+    name: "Natural Shakes & Juices",
+    description:
+      "Fresh and preservative-free beverages made from natural fruits and ingredients, promoting hydration and wellness.",
+    category: "Natural Shakes & Juices",
+    servingSize: "Family Pack",
     price_inr: 299,
-    price_usd: 3.99,
-    image_url: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=600&q=80",
-    in_stock: true,
-  },
-  {
-    id: "5",
-    name: "Lentil & Vegetable Soup (RTE)",
-    description: "Homemade-style lentil soup — no cream, low sodium. Ready to eat, rich in plant protein and fibre.",
-    type: "Healthy Soup",
-    shelf_life: "12–24 months",
-    age_group: "25–45 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "France"],
-    price_inr: 329,
-    price_usd: 4.49,
-    image_url: "https://images.unsplash.com/photo-1476124369491-a1ee04d74332?w=600&q=80",
-    in_stock: true,
-  },
-  {
-    id: "6",
-    name: "Millet-Based Healthy Snacks",
-    description: "Ancient grain snacks made from millets — a superfood rediscovered. Great for healthy on-the-go munching.",
-    type: "Healthy Snack",
-    shelf_life: "6–12 months",
-    age_group: "18–60 years",
-    markets: ["USA", "UK", "UAE", "Australia", "Germany", "Japan"],
-    price_inr: 249,
-    price_usd: 3.29,
-    image_url: "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=80",
+    image_url: "/products/shakes-juices.png",
+    images: ["/products/shakes-juices.png"],
+    rating: 4.5,
     in_stock: true,
   },
 ];

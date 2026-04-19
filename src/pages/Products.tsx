@@ -1,10 +1,9 @@
 import ProductCard from '@/components/ProductCard';
 import { useProducts } from '@/hooks/useProducts';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
 
 const Products = () => {
-  const { products, loading } = useProducts();
+  const { products } = useProducts();
 
   return (
     <div className="pt-20 section-padding indian-section-bg relative indian-paisley-left indian-paisley-right">
@@ -18,21 +17,15 @@ const Products = () => {
             Our <span className="text-secondary">Products</span>
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Each product is crafted with care, using 100% natural ingredients and ancient Indian recipes
+            Explore our range of healthy, natural food products across 5 wholesome categories
           </p>
         </motion.div>
 
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+          {products.map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
       </div>
     </div>
   );
