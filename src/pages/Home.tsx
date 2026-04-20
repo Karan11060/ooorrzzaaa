@@ -202,11 +202,10 @@ const Home = () => {
       <section className="section-padding relative indian-section-bg">
         <motion.div style={{ y: parallaxY }} className="absolute -top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-accent/5 blur-3xl pointer-events-none" />
         <div className="container mx-auto relative z-10">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-center">
+          <div className="flex justify-center gap-8 text-center">
             {[
               { value: '5', label: 'Health Products', suffix: '' },
               { value: '100', label: 'Natural Ingredients', suffix: '%' },
-              { value: '10K', label: 'Happy Families', suffix: '+' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -214,12 +213,12 @@ const Home = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, type: 'spring', stiffness: 200 }}
-                className="glass-card p-6"
+                className="glass-card p-10 min-w-[250px]"
               >
-                <p className="font-heading text-4xl sm:text-5xl text-secondary mb-1">
+                <p className="font-heading text-5xl sm:text-7xl text-secondary mb-2">
                   {stat.value}<span className="text-accent">{stat.suffix}</span>
                 </p>
-                <p className="text-muted-foreground text-sm">{stat.label}</p>
+                <p className="text-muted-foreground text-lg">{stat.label}</p>
               </motion.div>
             ))}
           </div>

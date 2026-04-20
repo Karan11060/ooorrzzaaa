@@ -22,7 +22,7 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
       {/* Gradient border effect */}
       <div className="absolute inset-0 rounded-2xl p-[1px] -z-10"
         style={{
-          background: 'linear-gradient(135deg, hsl(var(--deep-green)), hsl(var(--saffron)))',
+          background: 'linear-gradient(135deg, hsl(var(--deep-green)), hsl(var(--cream)))',
         }}
       />
 
@@ -52,7 +52,7 @@ const ProductCard = ({ product, index = 0 }: { product: Product; index?: number 
           </h3>
         </Link>
 
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+        <p className="text-green-900 text-sm mb-4 line-clamp-2">
           {product.description}
         </p>
 

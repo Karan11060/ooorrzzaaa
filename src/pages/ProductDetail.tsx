@@ -54,7 +54,7 @@ const ProductDetail = () => {
               </span>
             </div>
             <h1 className="font-heading text-3xl sm:text-4xl text-foreground mb-4">{product.name}</h1>
-            <p className="text-muted-foreground text-lg mb-6">{product.description}</p>
+            <p className="text-gray-700 text-lg mb-6">{product.description}</p>
 
             <div className="flex flex-wrap gap-4 mb-8">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">

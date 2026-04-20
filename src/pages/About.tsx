@@ -3,7 +3,7 @@ import MandalaBackground from '@/components/MandalaBackground';
 
 const About = () => {
   const stats = [
-    { value: '6', label: 'Health Products' },
+    { value: '5', label: 'Health Products' },
     { value: '100%', label: 'Natural' },
   ];
 
