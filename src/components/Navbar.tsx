@@ -28,8 +28,8 @@ const Navbar = () => {
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
             <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="Ooorrzzaaa Logo" className="h-10 w-auto rounded-lg" />
-              <span className="hidden sm:inline font-heading font-bold text-primary text-lg">Ooorrzzaaa</span>
+              <img src={logo} alt="Ooorrzzaaa Logo" className="h-14 w-auto rounded-lg" />
+              <span className="hidden sm:inline font-heading font-bold text-primary text-2xl">Ooorrzzaaa</span>
             </Link>
           </motion.div>
 
