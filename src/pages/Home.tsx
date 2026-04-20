@@ -3,7 +3,7 @@ import ProductCard from '@/components/ProductCard';
 import { useProducts } from '@/hooks/useProducts';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Leaf, ShieldCheck, Heart, Sparkles, ArrowRight, Star, Quote } from 'lucide-react';
+import { Leaf, ShieldCheck, Heart, Sparkles, ArrowRight, Star, Globe, Truck, Award } from 'lucide-react';
 import { useRef } from 'react';
 import MandalaBackground from '@/components/MandalaBackground';
 
@@ -24,10 +24,10 @@ const features = [
   { icon: Star, title: 'Family Approved', desc: 'Loved by kids and adults alike for taste and nutrition.' },
 ];
 
-const testimonials = [
-  { name: 'Priya Sharma', location: 'Mumbai, India', text: 'Ooorrrzzzaaa has completely changed how my family eats. The khichdi mix is a lifesaver on busy weeknights!', rating: 5 },
-  { name: 'James Carter', location: 'London, UK', text: 'As someone who loves Indian food, finding authentic healthy options abroad was hard — until I discovered this brand.', rating: 5 },
-  { name: 'Ananya Reddy', location: 'Hyderabad, India', text: 'My kids actually ask for the ragi cookies! Wholesome snacks that taste incredible. Highly recommend.', rating: 5 },
+const whyChooseUs = [
+  { icon: Award, title: 'Trusted Quality', desc: 'Every product undergoes rigorous quality checks and is certified by FSSAI for your peace of mind.' },
+  { icon: Globe, title: 'Worldwide Delivery', desc: 'From India to your doorstep — we ship globally so you never miss the taste of home.' },
+  { icon: Truck, title: 'Farm-Fresh Promise', desc: 'Sourced directly from Indian farms with zero middlemen, ensuring maximum freshness and fair trade.' },
 ];
 
 const processSteps = [
@@ -227,7 +227,7 @@ const Home = () => {
 
       <div className="indian-divider" />
 
-      {/* Testimonials */}
+      {/* Why Choose Us */}
       <section className="section-padding bg-card/50 relative indian-paisley-left indian-paisley-right">
         <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-secondary/5 blur-3xl pointer-events-none" />
         <div className="container mx-auto relative z-10">
@@ -239,10 +239,10 @@ const Home = () => {
             className="text-center mb-14"
           >
             <motion.p variants={fadeUp} className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">
-              Testimonials
+              Why Choose Us
             </motion.p>
             <motion.h2 variants={fadeUp} className="font-heading text-4xl sm:text-5xl text-foreground mb-4">
-              What Our <span className="text-secondary">Customers</span> Say
+              The <span className="text-secondary">Ooorrrzzzaaa</span> Difference
             </motion.h2>
             <motion.div variants={fadeUp} className="w-24 h-1 bg-accent mx-auto rounded-full" />
           </motion.div>
@@ -254,24 +254,22 @@ const Home = () => {
             variants={stagger}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            {testimonials.map((t) => (
+            {whyChooseUs.map((item) => (
               <motion.div
-                key={t.name}
+                key={item.title}
                 variants={fadeUp}
                 whileHover={{ y: -6 }}
-                className="glass-card p-8 relative"
+                className="glass-card p-8 text-center relative overflow-hidden group"
               >
-                <Quote className="w-10 h-10 text-accent/30 absolute top-4 right-4" />
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-accent text-accent" />
-                  ))}
-                </div>
-                <p className="text-foreground/80 mb-6 leading-relaxed italic">"{t.text}"</p>
-                <div>
-                  <p className="font-semibold text-foreground">{t.name}</p>
-                  <p className="text-muted-foreground text-sm">{t.location}</p>
-                </div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-secondary opacity-0 group-hover:opacity-100 transition-opacity" />
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-5"
+                >
+                  <item.icon className="w-8 h-8 text-secondary" />
+                </motion.div>
+                <h3 className="font-heading text-xl text-foreground mb-3">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">{item.desc}</p>
               </motion.div>
             ))}
           </motion.div>

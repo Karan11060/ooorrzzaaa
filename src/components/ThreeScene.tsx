@@ -1,206 +1,177 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Text } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import * as THREE from 'three';
 
-const GrainBowl = () => {
-  const ref = useRef<THREE.Group>(null!);
+/* ─── Floating particles that drift gently ─── */
+const Particles = ({ count = 60 }) => {
+  const mesh = useRef<THREE.InstancedMesh>(null!);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const particles = useMemo(() => {
+    const temp: { pos: THREE.Vector3; speed: number; offset: number; scale: number }[] = [];
+    for (let i = 0; i < count; i++) {
+      temp.push({
+        pos: new THREE.Vector3(
+          (Math.random() - 0.5) * 14,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 6 - 2,
+        ),
+        speed: 0.1 + Math.random() * 0.3,
+        offset: Math.random() * Math.PI * 2,
+        scale: 0.02 + Math.random() * 0.04,
+      });
+    }
+    return temp;
+  }, [count]);
+
   useFrame((state) => {
-    ref.current.rotation.y += 0.003;
-    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.15;
+    const t = state.clock.elapsedTime;
+    particles.forEach((p, i) => {
+      dummy.position.set(
+        p.pos.x + Math.sin(t * p.speed + p.offset) * 0.3,
+        p.pos.y + Math.cos(t * p.speed * 0.7 + p.offset) * 0.4,
+        p.pos.z,
+      );
+      dummy.scale.setScalar(p.scale * (1 + Math.sin(t * 0.8 + p.offset) * 0.3));
+      dummy.updateMatrix();
+      mesh.current.setMatrixAt(i, dummy.matrix);
+    });
+    mesh.current.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <group ref={ref} position={[-1.8, 0, 0]}>
-      {/* Bowl body */}
-      <mesh rotation={[0.2, 0, 0]}>
-        <sphereGeometry args={[0.55, 24, 18, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
-        <meshStandardMaterial color="#D4A054" roughness={0.25} metalness={0.5} emissive="#8B6F47" emissiveIntensity={0.15} />
+    <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
+      <sphereGeometry args={[1, 8, 8]} />
+      <meshStandardMaterial color="#F9A825" roughness={0.2} metalness={0.8} emissive="#F9A825" emissiveIntensity={0.4} transparent opacity={0.6} />
+    </instancedMesh>
+  );
+};
+
+/* ─── Orbiting torus knot — top-right ─── */
+const OrbitingKnot = () => {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    ref.current.rotation.x = t * 0.15;
+    ref.current.rotation.y = t * 0.2;
+    ref.current.position.y = 1.2 + Math.sin(t * 0.5) * 0.3;
+    ref.current.position.x = 3.2 + Math.cos(t * 0.3) * 0.2;
+  });
+
+  return (
+    <mesh ref={ref} position={[3.2, 1.2, -1]}>
+      <torusKnotGeometry args={[0.4, 0.12, 100, 16, 2, 3]} />
+      <meshStandardMaterial color="#FF6F00" roughness={0.15} metalness={0.85} emissive="#FF6F00" emissiveIntensity={0.25} />
+    </mesh>
+  );
+};
+
+/* ─── Spinning icosahedron — bottom-left ─── */
+const SpinningGem = () => {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    ref.current.rotation.x = t * 0.2;
+    ref.current.rotation.z = t * 0.15;
+    ref.current.position.y = -1.0 + Math.sin(t * 0.6 + 1) * 0.25;
+    ref.current.position.x = -3.5 + Math.cos(t * 0.4) * 0.15;
+  });
+
+  return (
+    <mesh ref={ref} position={[-3.5, -1, -0.5]}>
+      <icosahedronGeometry args={[0.55, 0]} />
+      <meshStandardMaterial color="#138808" roughness={0.1} metalness={0.9} emissive="#138808" emissiveIntensity={0.2} />
+    </mesh>
+  );
+};
+
+/* ─── Morphing sphere cluster — top-left ─── */
+const SphereCluster = () => {
+  const ref = useRef<THREE.Group>(null!);
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    ref.current.rotation.y = t * 0.1;
+    ref.current.position.y = 1.8 + Math.sin(t * 0.4) * 0.2;
+  });
+
+  const spheres = useMemo(
+    () =>
+      Array.from({ length: 5 }, (_, i) => ({
+        pos: [
+          Math.cos((i / 5) * Math.PI * 2) * 0.35,
+          Math.sin((i / 5) * Math.PI * 2) * 0.35,
+          0,
+        ] as [number, number, number],
+        color: ['#FF6F00', '#F9A825', '#138808', '#E65100', '#2E7D32'][i],
+        size: 0.12 + (i % 3) * 0.04,
+      })),
+    [],
+  );
+
+  return (
+    <group ref={ref} position={[-3, 1.8, -1.5]}>
+      <mesh>
+        <sphereGeometry args={[0.18, 24, 24]} />
+        <meshStandardMaterial color="#F9A825" roughness={0.1} metalness={0.9} emissive="#F9A825" emissiveIntensity={0.35} />
       </mesh>
-      {/* Food inside */}
-      <mesh position={[0, 0.12, 0]} rotation={[0.2, 0, 0]}>
-        <sphereGeometry args={[0.48, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.3]} />
-        <meshStandardMaterial color="#8BC34A" roughness={0.5} metalness={0.1} emissive="#6BA826" emissiveIntensity={0.1} />
-      </mesh>
-      {/* Grains on top */}
-      {[0, 1, 2, 3, 4].map((i) => (
-        <mesh key={i} position={[Math.cos(i * 1.2) * 0.25, 0.22, Math.sin(i * 1.2) * 0.25]}>
-          <sphereGeometry args={[0.06, 8, 8]} />
-          <meshStandardMaterial color="#F9A825" roughness={0.3} metalness={0.6} emissive="#F9A825" emissiveIntensity={0.2} />
+      {spheres.map((s, i) => (
+        <mesh key={i} position={s.pos}>
+          <sphereGeometry args={[s.size, 16, 16]} />
+          <meshStandardMaterial color={s.color} roughness={0.15} metalness={0.8} emissive={s.color} emissiveIntensity={0.2} />
         </mesh>
       ))}
     </group>
   );
 };
 
-const WheatStalk = () => {
-  const ref = useRef<THREE.Group>(null!);
+/* ─── Rotating ring — bottom-right ─── */
+const GlowRing = () => {
+  const ref = useRef<THREE.Mesh>(null!);
   useFrame((state) => {
-    ref.current.rotation.y += 0.003;
-    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.6 + 2) * 0.15;
+    const t = state.clock.elapsedTime;
+    ref.current.rotation.x = Math.PI * 0.35 + Math.sin(t * 0.3) * 0.15;
+    ref.current.rotation.y = t * 0.12;
+    ref.current.position.y = -1.5 + Math.sin(t * 0.45 + 2) * 0.2;
   });
 
   return (
-    <group ref={ref} position={[0, 0.3, 0]}>
-      {/* Main stem */}
-      <mesh>
-        <cylinderGeometry args={[0.02, 0.025, 1.8, 12]} />
-        <meshStandardMaterial color="#7CB342" roughness={0.4} metalness={0.2} emissive="#5A8C2E" emissiveIntensity={0.1} />
-      </mesh>
-      {/* Wheat grains along top */}
-      {[-0.3, -0.15, 0, 0.15, 0.3].map((y, i) => (
-        <group key={i} position={[0, 0.55 + y, 0]} rotation={[0, i * 0.8, 0.3 * (i % 2 === 0 ? 1 : -1)]}>
-          <mesh position={[0.08, 0, 0]}>
-            <sphereGeometry args={[0.04, 8, 8]} />
-            <meshStandardMaterial color="#F9A825" roughness={0.3} metalness={0.5} emissive="#F9A825" emissiveIntensity={0.15} />
-          </mesh>
-          <mesh position={[-0.08, 0, 0]}>
-            <sphereGeometry args={[0.04, 8, 8]} />
-            <meshStandardMaterial color="#E8B828" roughness={0.3} metalness={0.5} emissive="#E8B828" emissiveIntensity={0.15} />
-          </mesh>
-        </group>
-      ))}
-      {/* Leaves */}
-      {[0.2, -0.3].map((y, i) => (
-        <mesh key={`leaf-${i}`} position={[i === 0 ? 0.15 : -0.15, y, 0]} rotation={[0, 0, i === 0 ? -0.6 : 0.6]}>
-          <planeGeometry args={[0.3, 0.08]} />
-          <meshStandardMaterial color="#66BB6A" side={THREE.DoubleSide} roughness={0.7} />
-        </mesh>
-      ))}
-    </group>
+    <mesh ref={ref} position={[3.5, -1.5, -1]}>
+      <torusGeometry args={[0.6, 0.06, 24, 64]} />
+      <meshStandardMaterial color="#F9A825" roughness={0.1} metalness={0.9} emissive="#F9A825" emissiveIntensity={0.35} />
+    </mesh>
   );
 };
 
-const Lotus = () => {
+/* ─── Orbiting dots trail — mid-right ─── */
+const OrbitDots = () => {
   const ref = useRef<THREE.Group>(null!);
   useFrame((state) => {
-    ref.current.rotation.y += 0.003;
-    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.7 + 4) * 0.15;
+    ref.current.rotation.z = state.clock.elapsedTime * 0.08;
+    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
   });
 
   return (
-    <group ref={ref} position={[1.8, 0, 0]}>
-      {/* Center */}
-      <mesh>
-        <sphereGeometry args={[0.15, 16, 16]} />
-        <meshStandardMaterial color="#F9A825" roughness={0.2} metalness={0.7} emissive="#F9A825" emissiveIntensity={0.3} />
-      </mesh>
-      {/* Petals - inner ring */}
-      {Array.from({ length: 6 }).map((_, i) => {
-        const angle = (i / 6) * Math.PI * 2;
+    <group ref={ref} position={[0, 0, -3]}>
+      {Array.from({ length: 16 }).map((_, i) => {
+        const angle = (i / 16) * Math.PI * 2;
+        const radius = 3.8;
+        const colors = ['#FF6F00', '#138808', '#F9A825'];
         return (
-          <mesh key={`inner-${i}`} position={[Math.cos(angle) * 0.25, 0.05, Math.sin(angle) * 0.25]} rotation={[0.4, angle, 0.3]}>
-            <planeGeometry args={[0.22, 0.35]} />
-            <meshStandardMaterial color="#E91E63" side={THREE.DoubleSide} roughness={0.3} opacity={0.95} transparent emissive="#C2185B" emissiveIntensity={0.2} />
-          </mesh>
-        );
-      })}
-      {/* Petals - outer ring */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const angle = (i / 8) * Math.PI * 2 + 0.3;
-        return (
-          <mesh key={`outer-${i}`} position={[Math.cos(angle) * 0.4, -0.05, Math.sin(angle) * 0.4]} rotation={[0.7, angle, 0.2]}>
-            <planeGeometry args={[0.25, 0.4]} />
-            <meshStandardMaterial color="#F06292" side={THREE.DoubleSide} roughness={0.3} opacity={0.9} transparent emissive="#EC407A" emissiveIntensity={0.15} />
-          </mesh>
-        );
-      })}
-    </group>
-  );
-};
-
-// 3D Rotating Mandala Ring
-const MandalaRing = () => {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame((state) => {
-    ref.current.rotation.z += 0.004;
-    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.3;
-  });
-
-  return (
-    <group ref={ref} position={[0, 0, -0.5]}>
-      {/* Outer ring with Indian colors (Saffron, White, Green) */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const angle = (i / 12) * Math.PI * 2;
-        const colors = ['#FF6F00', '#FFFFFF', '#138808']; // Saffron, White, Green
-        const color = colors[i % 3];
-        
-        return (
-          <mesh key={i} position={[Math.cos(angle) * 2, Math.sin(angle) * 2, 0]} rotation={[0, 0, angle]}>
-            <cylinderGeometry args={[0.12, 0.12, 0.05, 12]} />
-            <meshStandardMaterial 
-              color={color} 
-              roughness={color === '#FFFFFF' ? 0.2 : 0.25} 
-              metalness={0.6} 
-              emissive={color === '#FF6F00' ? '#FF6F00' : color === '#138808' ? '#138808' : '#FFFFFF'} 
-              emissiveIntensity={0.2}
+          <mesh key={i} position={[Math.cos(angle) * radius, Math.sin(angle) * radius, 0]}>
+            <sphereGeometry args={[0.06 + (i % 3) * 0.02, 12, 12]} />
+            <meshStandardMaterial
+              color={colors[i % 3]}
+              roughness={0.15}
+              metalness={0.8}
+              emissive={colors[i % 3]}
+              emissiveIntensity={0.3}
+              transparent
+              opacity={0.5 + (i % 4) * 0.12}
             />
           </mesh>
         );
       })}
-      
-      {/* Inner decorative rings */}
-      {[1.3, 1.6, 2.0].map((radius, ringIdx) => (
-        <group key={`ring-${ringIdx}`}>
-          {Array.from({ length: 8 + ringIdx * 2 }).map((_, i) => {
-            const angle = (i / (8 + ringIdx * 2)) * Math.PI * 2;
-            return (
-              <mesh key={`ring-${ringIdx}-dot-${i}`} position={[Math.cos(angle) * radius, Math.sin(angle) * radius, 0]}>
-                <sphereGeometry args={[0.08 - ringIdx * 0.02, 12, 12]} />
-                <meshStandardMaterial 
-                  color={ringIdx === 0 ? '#F9A825' : ringIdx === 1 ? '#D4A054' : '#FF6F00'}
-                  roughness={0.2}
-                  metalness={0.7}
-                  emissive={ringIdx === 0 ? '#F9A825' : ringIdx === 1 ? '#D4A054' : '#FF6F00'}
-                  emissiveIntensity={0.25}
-                />
-              </mesh>
-            );
-          })}
-        </group>
-      ))}
-    </group>
-  );
-};
-
-// Spinning Om Symbol / Chakra
-const Chakra = () => {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame((state) => {
-    ref.current.rotation.z -= 0.005;
-    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.4) * 0.2;
-  });
-
-  return (
-    <group ref={ref} position={[0, 2, -1]}>
-      {/* Central sphere */}
-      <mesh>
-        <sphereGeometry args={[0.3, 24, 24]} />
-        <meshStandardMaterial color="#FF6F00" roughness={0.15} metalness={0.8} emissive="#FF6F00" emissiveIntensity={0.4} />
-      </mesh>
-      
-      {/* Rotating orbits */}
-      {Array.from({ length: 3 }).map((_, orbitIdx) => (
-        <group key={`orbit-${orbitIdx}`} rotation={[Math.PI * 0.2, 0, Math.PI * 0.3 * orbitIdx]}>
-          {Array.from({ length: 4 }).map((_, i) => {
-            const angle = (i / 4) * Math.PI * 2;
-            const radius = 0.6 + orbitIdx * 0.3;
-            const orbitalColors = ['#138808', '#F9A825', '#E91E63'];
-            return (
-              <mesh key={`orbit-dot-${orbitIdx}-${i}`} position={[Math.cos(angle) * radius, Math.sin(angle) * radius, 0]}>
-                <sphereGeometry args={[0.1 - orbitIdx * 0.02, 12, 12]} />
-                <meshStandardMaterial 
-                  color={orbitalColors[orbitIdx]}
-                  roughness={0.2}
-                  metalness={0.7}
-                  emissive={orbitalColors[orbitIdx]}
-                  emissiveIntensity={0.3}
-                />
-              </mesh>
-            );
-          })}
-        </group>
-      ))}
     </group>
   );
 };
@@ -208,61 +179,43 @@ const Chakra = () => {
 const ThreeScene = () => {
   return (
     <div className="absolute inset-0 hidden sm:block">
-      <Canvas 
-        camera={{ position: [0, 0, 5.5], fov: 50 }} 
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 50 }}
         dpr={[1, 2]}
         gl={{
           antialias: true,
           alpha: true,
-          preserveDrawingBuffer: true,
-          powerPreference: 'high-performance'
+          powerPreference: 'high-performance',
         }}
       >
-        {/* Enhanced professional lighting setup */}
-        <ambientLight intensity={0.8} color="#ffffff" />
-        
-        {/* Key light - Saffron from top left */}
-        <directionalLight 
-          position={[-5, 6, 3]} 
-          intensity={1.5} 
-          color="#FF6F00"
-          castShadow
-        />
-        
-        {/* Fill light - Gold from right */}
-        <directionalLight 
-          position={[5, 3, 4]} 
-          intensity={0.8} 
-          color="#F9A825"
-          castShadow
-        />
-        
-        {/* Accent light - Green from bottom */}
-        <directionalLight 
-          position={[0, -3, -2]} 
-          intensity={0.6} 
-          color="#138808"
-        />
+        {/* Lighting */}
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[-4, 5, 3]} intensity={1.2} color="#FF6F00" />
+        <directionalLight position={[4, 2, 4]} intensity={0.7} color="#F9A825" />
+        <directionalLight position={[0, -3, 2]} intensity={0.4} color="#138808" />
+        <pointLight position={[0, 0, 3]} intensity={0.5} color="#FFFFFF" />
 
-        {/* Central Mandala Ring - prominent Indian element */}
-        <Float speed={0.8} rotationIntensity={0.1} floatIntensity={0.15}>
-          <MandalaRing />
+        {/* Ambient particle field */}
+        <Particles count={50} />
+
+        {/* Orbiting dots ring — background */}
+        <OrbitDots />
+
+        {/* Corner / edge elements — away from center text */}
+        <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.15}>
+          <OrbitingKnot />
         </Float>
 
-        {/* Chakra - sacred Indian symbol */}
-        <Float speed={1.1} rotationIntensity={0.15} floatIntensity={0.25}>
-          <Chakra />
+        <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
+          <SpinningGem />
         </Float>
 
-        {/* Traditional elements */}
-        <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
-          <GrainBowl />
+        <Float speed={0.9} rotationIntensity={0.05} floatIntensity={0.1}>
+          <SphereCluster />
         </Float>
-        <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.2}>
-          <WheatStalk />
-        </Float>
-        <Float speed={1.8} rotationIntensity={0.25} floatIntensity={0.35}>
-          <Lotus />
+
+        <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.12}>
+          <GlowRing />
         </Float>
       </Canvas>
     </div>
