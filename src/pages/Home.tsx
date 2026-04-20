@@ -301,7 +301,7 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/products" className="btn-saffron inline-flex items-center gap-2 justify-center">
-                Shop Now <ArrowRight className="w-4 h-4" />
+                Explore Now <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/about" className="btn-green-outline inline-flex items-center gap-2 justify-center">
                 Learn Our Story
