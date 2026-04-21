@@ -68,8 +68,7 @@ const Contact = () => {
             className="mt-16 text-center"
           >
             <h3 className="font-heading text-2xl text-foreground mb-4">Business Hours</h3>
-            <p className="text-muted-foreground">Monday – Saturday: 9:00 AM – 7:00 PM IST</p>
-            <p className="text-muted-foreground">Sunday: Closed</p>
+            <p className="text-muted-foreground">Monday – Sunday: 9:00 AM – 7:00 PM IST</p>
           </motion.div>
         </div>
       </section>

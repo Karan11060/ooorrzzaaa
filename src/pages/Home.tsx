@@ -73,14 +73,14 @@ const Home = () => {
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
             variants={stagger}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto w-fit"
+            className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto"
           >
             {features.map((f) => (
               <motion.div
                 key={f.title}
                 variants={fadeUp}
                 whileHover={{ y: -8, boxShadow: '0 20px 40px -15px hsl(var(--deep-green) / 0.15)' }}
-                className="glass-card p-8 text-center group cursor-default"
+                className="glass-card p-8 text-center group cursor-default w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
               >
                 <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-5 group-hover:bg-secondary/20 transition-colors duration-300">
                   <f.icon className="w-7 h-7 text-secondary" />
